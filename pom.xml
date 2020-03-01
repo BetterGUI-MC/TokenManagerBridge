@@ -5,17 +5,17 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>me.hsgamer.bettergui</groupId>
-  <artifactId>ExampleAddon</artifactId>
+  <artifactId>TokenManagerBridge</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <name>ExampleAddon</name>
-  <description>An Example addon for BetterGUI</description>
+  <name>TokenManagerBridge</name>
+  <description>Hook to TokenManager</description>
 
   <properties>
     <java.version>1.8</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.mainClass>me.hsgamer.bettergui.exampleaddon.ExampleAddon</project.mainClass>
+    <project.mainClass>me.hsgamer.bettergui.tokenmanagerbridge.Main</project.mainClass>
   </properties>
 
   <build>
@@ -57,6 +57,10 @@
 
   <repositories>
     <repository>
+      <id>jitpack-repo</id>
+      <url>https://jitpack.io</url>
+    </repository>
+    <repository>
       <id>papermc-repo</id>
       <url>https://papermc.io/repo/repository/maven-public/</url>
     </repository>
@@ -81,6 +85,12 @@
       <groupId>me.HSGamer</groupId>
       <artifactId>BetterGUI</artifactId>
       <version>1.0-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.github.Realizedd</groupId>
+      <artifactId>TokenManager</artifactId>
+      <version>3.2.4</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
