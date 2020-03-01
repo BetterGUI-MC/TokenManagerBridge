@@ -57,10 +57,6 @@
 
   <repositories>
     <repository>
-      <id>jitpack-repo</id>
-      <url>https://jitpack.io</url>
-    </repository>
-    <repository>
       <id>papermc-repo</id>
       <url>https://papermc.io/repo/repository/maven-public/</url>
     </repository>
@@ -91,7 +87,8 @@
       <groupId>com.github.Realizedd</groupId>
       <artifactId>TokenManager</artifactId>
       <version>3.2.4</version>
-      <scope>provided</scope>
+      <scope>system</scope>
+      <systemPath>${basedir}/lib/TokenManager.jar</systemPath>
     </dependency>
   </dependencies>
 </project>
