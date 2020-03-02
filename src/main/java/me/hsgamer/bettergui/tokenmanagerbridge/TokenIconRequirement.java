@@ -1,7 +1,9 @@
 package me.hsgamer.bettergui.tokenmanagerbridge;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import me.hsgamer.bettergui.BetterGUI;
 import me.hsgamer.bettergui.config.impl.MessageConfig.DefaultMessage;
@@ -29,8 +31,9 @@ public class TokenIconRequirement extends IconRequirement<Object, Long> implemen
     if (ExpressionUtils.isValidExpression(parsed)) {
       return ExpressionUtils.getResult(parsed).longValue();
     } else {
-      if (Validate.isValidInteger(parsed)) {
-        return Long.parseLong(parsed);
+      Optional<BigDecimal> number = Validate.getNumber(parsed);
+      if (number.isPresent()) {
+        return number.get().longValue();
       } else {
         CommonUtils.sendMessage(player,
             BetterGUI.getInstance().getMessageConfig().get(DefaultMessage.INVALID_NUMBER)
