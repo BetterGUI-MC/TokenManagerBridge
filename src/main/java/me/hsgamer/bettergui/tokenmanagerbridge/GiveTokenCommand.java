@@ -21,7 +21,7 @@ public class GiveTokenCommand extends Command {
   public void addToTaskChain(Player player, TaskChain<?> taskChain) {
     long tokensToGive = 0;
     String parsed = getParsedCommand(player);
-    if (Validate.isValidPositiveInteger(parsed)) {
+    if (Validate.isValidPositiveNumber(parsed)) {
       tokensToGive = Long.parseLong(parsed);
     } else if (ExpressionUtils.isValidExpression(parsed)) {
       tokensToGive = Objects.requireNonNull(ExpressionUtils.getResult(parsed)).longValue();
