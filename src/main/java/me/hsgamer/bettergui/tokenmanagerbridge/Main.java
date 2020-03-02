@@ -1,40 +1,18 @@
 package me.hsgamer.bettergui.tokenmanagerbridge;
 
+import me.hsgamer.bettergui.builder.CommandBuilder;
+import me.hsgamer.bettergui.builder.RequirementBuilder;
+import me.hsgamer.bettergui.manager.VariableManager;
 import me.hsgamer.bettergui.object.addon.Addon;
 
 public final class Main extends Addon {
 
-  /**
-   * Called when loading the addon
-   *
-   * @return whether the addon is loaded properly
-   */
-  @Override
-  public boolean onLoad() {
-    return true;
-  }
-
-  /**
-   * Called when enabling the addon
-   */
   @Override
   public void onEnable() {
-    // Enable logic
-  }
-
-  /**
-   * Called after all addons were loaded
-   */
-  @Override
-  public void onPostEnable() {
-    // Post Enable logic
-  }
-
-  /**
-   * Called when disabling the addon
-   */
-  @Override
-  public void onDisable() {
-    // Disable logic
+    TokenManagerHook.setupPlugin();
+    RequirementBuilder.register("point", TokenIconRequirement.class);
+    CommandBuilder.register("give-point:", GiveTokenCommand.class);
+    VariableManager.register("tokens", (player, s) -> String
+        .valueOf(TokenManagerHook.getTokens(player)));
   }
 }
