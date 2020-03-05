@@ -10,8 +10,8 @@ public final class Main extends Addon {
   @Override
   public void onEnable() {
     TokenManagerHook.setupPlugin();
-    RequirementBuilder.register("point", TokenIconRequirement.class);
-    CommandBuilder.register("give-point:", GiveTokenCommand.class);
+    RequirementBuilder.register("token", TokenIconRequirement.class);
+    CommandBuilder.register("give-token:", GiveTokenCommand.class);
     VariableManager.register("tokens", (player, s) -> String
         .valueOf(TokenManagerHook.getTokens(player)));
   }
