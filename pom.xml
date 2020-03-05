@@ -65,6 +65,10 @@
       <url>https://oss.sonatype.org/content/groups/public/</url>
     </repository>
     <repository>
+      <id>codemc-releases</id>
+      <url>https://repo.codemc.io/repository/maven-releases/</url>
+    </repository>
+    <repository>
       <id>codemc-snapshots</id>
       <url>https://repo.codemc.io/repository/maven-snapshots/</url>
     </repository>
