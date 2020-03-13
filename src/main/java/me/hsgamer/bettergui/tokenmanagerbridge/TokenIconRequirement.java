@@ -47,7 +47,6 @@ public class TokenIconRequirement extends IconRequirement<Object, Long> implemen
   public boolean check(Player player) {
     long tokens = getParsedValue(player);
     if (tokens > 0 && !TokenManagerHook.hasTokens(player, tokens)) {
-      sendFailCommand(player);
       return false;
     } else {
       checked.put(player.getUniqueId(), tokens);
