@@ -8,26 +8,25 @@ import java.util.UUID;
 import me.hsgamer.bettergui.BetterGUI;
 import me.hsgamer.bettergui.config.impl.MessageConfig.DefaultMessage;
 import me.hsgamer.bettergui.object.Icon;
-import me.hsgamer.bettergui.object.IconRequirement;
 import me.hsgamer.bettergui.object.IconVariable;
+import me.hsgamer.bettergui.object.Requirement;
 import me.hsgamer.bettergui.util.CommonUtils;
 import me.hsgamer.bettergui.util.ExpressionUtils;
 import me.hsgamer.bettergui.util.Validate;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-public class TokenIconRequirement extends IconRequirement<Object, Long> implements IconVariable {
+public class TokenIconRequirement extends Requirement<Object, Long> implements IconVariable {
 
   private final Map<UUID, Long> checked = new HashMap<>();
 
-  public TokenIconRequirement(Icon icon) {
-    super(icon, true);
+  public TokenIconRequirement() {
+    super(true);
   }
 
   @Override
   public Long getParsedValue(Player player) {
-    String parsed = String.valueOf(value).trim();
-    parsed = icon.hasVariables(parsed) ? icon.setVariables(parsed, player) : parsed;
+    String parsed = parseFromString(String.valueOf(value).trim(), player);
     if (ExpressionUtils.isValidExpression(parsed)) {
       return ExpressionUtils.getResult(parsed).longValue();
     } else {
@@ -68,8 +67,8 @@ public class TokenIconRequirement extends IconRequirement<Object, Long> implemen
   }
 
   @Override
-  public Icon getIcon() {
-    return this.icon;
+  public Optional<Icon> getIconInvolved() {
+    return getIcon();
   }
 
   @Override

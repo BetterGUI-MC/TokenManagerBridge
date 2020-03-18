@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 public class TokenManagerHook {
+
   private static TokenManager tokenManager;
 
   public static void setupPlugin() {
