@@ -5,8 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import me.hsgamer.bettergui.BetterGUI;
-import me.hsgamer.bettergui.config.impl.MessageConfig.DefaultMessage;
+import me.hsgamer.bettergui.config.impl.MessageConfig;
 import me.hsgamer.bettergui.object.LocalVariable;
 import me.hsgamer.bettergui.object.LocalVariableManager;
 import me.hsgamer.bettergui.object.Requirement;
@@ -14,6 +13,7 @@ import me.hsgamer.bettergui.util.CommonUtils;
 import me.hsgamer.bettergui.util.ExpressionUtils;
 import me.hsgamer.bettergui.util.Validate;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 public class TokenIconRequirement extends Requirement<Object, Long> implements LocalVariable {
@@ -35,8 +35,7 @@ public class TokenIconRequirement extends Requirement<Object, Long> implements L
         return number.get().longValue();
       } else {
         CommonUtils.sendMessage(player,
-            BetterGUI.getInstance().getMessageConfig().get(DefaultMessage.INVALID_NUMBER)
-                .replace("{input}", parsed));
+            MessageConfig.INVALID_NUMBER.getValue().replace("{input}", parsed));
         return 0L;
       }
     }
@@ -72,12 +71,14 @@ public class TokenIconRequirement extends Requirement<Object, Long> implements L
   }
 
   @Override
-  public String getReplacement(Player player, String s) {
-    long tokens = getParsedValue(player);
-    if (tokens > 0 && !TokenManagerHook.hasTokens(player, tokens)) {
+  public String getReplacement(OfflinePlayer player, String s) {
+    if (!player.isOnline()) {
+      return "";
+    }
+    long tokens = getParsedValue(player.getPlayer());
+    if (tokens > 0 && !TokenManagerHook.hasTokens(player.getPlayer(), tokens)) {
       return String.valueOf(tokens);
     }
-    return BetterGUI.getInstance().getMessageConfig()
-        .get(DefaultMessage.HAVE_MET_REQUIREMENT_PLACEHOLDER);
+    return MessageConfig.HAVE_MET_REQUIREMENT_PLACEHOLDER.getValue();
   }
 }

@@ -12,7 +12,11 @@ public final class Main extends Addon {
     TokenManagerHook.setupPlugin();
     RequirementBuilder.register("token", TokenIconRequirement.class);
     CommandBuilder.register("give-token:", GiveTokenCommand.class);
-    VariableManager.register("tokens", (player, s) -> String
-        .valueOf(TokenManagerHook.getTokens(player)));
+    VariableManager.register("tokens", (player, s) -> {
+      if (!player.isOnline()) {
+        return "";
+      }
+      return String.valueOf(TokenManagerHook.getTokens(player.getPlayer()));
+    });
   }
 }
