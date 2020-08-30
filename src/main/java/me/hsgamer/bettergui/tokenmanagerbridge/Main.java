@@ -10,8 +10,8 @@ public final class Main extends Addon {
   @Override
   public void onEnable() {
     TokenManagerHook.setupPlugin();
-    RequirementBuilder.register("token", TokenIconRequirement.class);
-    CommandBuilder.register("give-token:", GiveTokenCommand.class);
+    RequirementBuilder.register(TokenIconRequirement::new, "token");
+    CommandBuilder.register(GiveTokenCommand::new, "give-token:");
     VariableManager.register("tokens", (player, s) -> {
       if (!player.isOnline()) {
         return "";

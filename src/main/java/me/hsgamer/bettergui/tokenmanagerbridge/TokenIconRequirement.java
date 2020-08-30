@@ -5,13 +5,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import me.hsgamer.bettergui.config.impl.MessageConfig;
-import me.hsgamer.bettergui.object.LocalVariable;
-import me.hsgamer.bettergui.object.LocalVariableManager;
+import me.hsgamer.bettergui.config.MessageConfig;
 import me.hsgamer.bettergui.object.Requirement;
-import me.hsgamer.bettergui.util.CommonUtils;
-import me.hsgamer.bettergui.util.ExpressionUtils;
-import me.hsgamer.bettergui.util.Validate;
+import me.hsgamer.bettergui.object.variable.LocalVariable;
+import me.hsgamer.bettergui.object.variable.LocalVariableManager;
+import me.hsgamer.bettergui.util.MessageUtils;
+import me.hsgamer.bettergui.util.common.Validate;
+import me.hsgamer.bettergui.util.expression.ExpressionUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -34,7 +34,7 @@ public class TokenIconRequirement extends Requirement<Object, Long> implements L
       if (number.isPresent()) {
         return number.get().longValue();
       } else {
-        CommonUtils.sendMessage(player,
+        MessageUtils.sendMessage(player,
             MessageConfig.INVALID_NUMBER.getValue().replace("{input}", parsed));
         return 0L;
       }
