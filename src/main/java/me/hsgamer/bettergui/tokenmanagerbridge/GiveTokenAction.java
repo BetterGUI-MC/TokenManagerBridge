@@ -1,48 +1,50 @@
 package me.hsgamer.bettergui.tokenmanagerbridge;
 
+import me.hsgamer.bettergui.BetterGUI;
 import me.hsgamer.bettergui.api.action.BaseAction;
-import me.hsgamer.bettergui.config.MessageConfig;
-import me.hsgamer.bettergui.lib.core.bukkit.utils.MessageUtils;
-import me.hsgamer.bettergui.lib.core.common.Validate;
-import me.hsgamer.bettergui.lib.core.expression.ExpressionUtils;
-import me.hsgamer.bettergui.lib.taskchain.TaskChain;
+import me.hsgamer.bettergui.builder.ActionBuilder;
+import me.hsgamer.hscore.common.Validate;
+import me.hsgamer.hscore.task.BatchRunnable;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import java.util.Objects;
+import java.math.BigDecimal;
+import java.util.Optional;
 import java.util.UUID;
 
 public class GiveTokenAction extends BaseAction {
 
-    public GiveTokenAction(String string) {
-        super(string);
+    protected GiveTokenAction(ActionBuilder.Input input) {
+        super(input);
     }
 
     @Override
-    public void addToTaskChain(UUID uuid, TaskChain<?> taskChain) {
-        long tokensToGive = 0;
+    public void accept(UUID uuid, BatchRunnable.Process process) {
         Player player = Bukkit.getPlayer(uuid);
         if (player == null) {
+            process.next();
             return;
         }
 
         String parsed = getReplacedString(uuid);
-        if (Validate.isValidPositiveNumber(parsed)) {
-            tokensToGive = Long.parseLong(parsed);
-        } else if (ExpressionUtils.isValidExpression(parsed)) {
-            tokensToGive = Objects.requireNonNull(ExpressionUtils.getResult(parsed)).longValue();
-        } else {
-            MessageUtils.sendMessage(player, MessageConfig.INVALID_NUMBER.getValue().replace("{input}", parsed));
+        Optional<Long> optionalTokens = Validate.getNumber(parsed).map(BigDecimal::longValue);
+        if (!optionalTokens.isPresent()) {
+            player.sendMessage(ChatColor.RED + "Invalid token amount: " + parsed);
+            process.next();
+            return;
         }
+        long tokensToGive = optionalTokens.get();
 
         if (tokensToGive > 0) {
-            long finalTokensToGive = tokensToGive;
-            taskChain.sync(() -> {
-                if (!TokenManagerHook.giveTokens(player, finalTokensToGive)) {
+            Bukkit.getScheduler().runTask(BetterGUI.getInstance(), () -> {
+                if (!TokenManagerHook.giveTokens(player, tokensToGive)) {
                     player.sendMessage(ChatColor.RED + "Error: the transaction couldn't be executed. Please inform the staff.");
                 }
+                process.next();
             });
+        } else {
+            process.next();
         }
     }
 }

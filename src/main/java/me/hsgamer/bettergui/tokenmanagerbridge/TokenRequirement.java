@@ -1,37 +1,32 @@
 package me.hsgamer.bettergui.tokenmanagerbridge;
 
+import me.hsgamer.bettergui.BetterGUI;
 import me.hsgamer.bettergui.api.requirement.TakableRequirement;
-import me.hsgamer.bettergui.config.MessageConfig;
-import me.hsgamer.bettergui.lib.core.bukkit.utils.MessageUtils;
-import me.hsgamer.bettergui.lib.core.expression.ExpressionUtils;
-import me.hsgamer.bettergui.lib.core.variable.VariableManager;
-import me.hsgamer.bettergui.manager.PluginVariableManager;
+import me.hsgamer.bettergui.builder.RequirementBuilder;
+import me.hsgamer.bettergui.util.StringReplacerApplier;
+import me.hsgamer.hscore.bukkit.utils.MessageUtils;
+import me.hsgamer.hscore.common.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 public class TokenRequirement extends TakableRequirement<Long> {
-
-    private final Map<UUID, Long> checked = new HashMap<>();
-
-    public TokenRequirement(String name) {
-        super(name);
-        PluginVariableManager.register(name, (original, uuid) -> {
+    protected TokenRequirement(RequirementBuilder.Input input) {
+        super(input);
+        getMenu().getVariableManager().register(getName(), (original, uuid) -> {
             Player player = Bukkit.getPlayer(uuid);
             if (player == null) {
                 return "";
             }
-            long tokens = getParsedValue(uuid);
+            long tokens = getFinalValue(uuid);
             if (tokens > 0 && !TokenManagerHook.hasTokens(player, tokens)) {
                 return String.valueOf(tokens);
             }
-            return MessageConfig.HAVE_MET_REQUIREMENT_PLACEHOLDER.getValue();
+            return BetterGUI.getInstance().getMessageConfig().haveMetRequirementPlaceholder;
         });
     }
 
@@ -46,36 +41,28 @@ public class TokenRequirement extends TakableRequirement<Long> {
     }
 
     @Override
-    protected void takeChecked(UUID uuid) {
-        Player player = Bukkit.getPlayer(uuid);
-        if (player == null) {
-            return;
-        }
-        if (!TokenManagerHook.takeTokens(player, checked.remove(uuid))) {
-            player.sendMessage(ChatColor.RED + "Error: the transaction couldn't be executed. Please inform the staff.");
-        }
-    }
-
-    @Override
-    public Long getParsedValue(UUID uuid) {
-        String parsed = VariableManager.setVariables(String.valueOf(value).trim(), uuid);
-        return Optional.ofNullable(ExpressionUtils.getResult(parsed)).map(BigDecimal::longValue).orElseGet(() -> {
-            Optional.ofNullable(Bukkit.getPlayer(uuid)).ifPresent(player -> MessageUtils.sendMessage(player, MessageConfig.INVALID_NUMBER.getValue().replace("{input}", parsed)));
+    protected Long convert(Object o, UUID uuid) {
+        String parsed = StringReplacerApplier.replace(String.valueOf(o).trim(), uuid, this);
+        return Validate.getNumber(parsed).map(BigDecimal::longValue).orElseGet(() -> {
+            Optional.ofNullable(Bukkit.getPlayer(uuid)).ifPresent(player -> MessageUtils.sendMessage(player, BetterGUI.getInstance().getMessageConfig().invalidNumber.replace("{input}", parsed)));
             return 0L;
         });
     }
 
     @Override
-    public boolean check(UUID uuid) {
+    protected Result checkConverted(UUID uuid, Long value) {
         Player player = Bukkit.getPlayer(uuid);
         if (player == null) {
-            return true;
+            return Result.success();
         }
-        long tokens = getParsedValue(uuid);
-        if (tokens > 0 && !TokenManagerHook.hasTokens(player, tokens)) {
-            return false;
+        if (value > 0 && !TokenManagerHook.hasTokens(player, value)) {
+            return Result.fail();
         }
-        checked.put(uuid, tokens);
-        return true;
+        return successConditional((uuid1, process) -> Bukkit.getScheduler().runTask(BetterGUI.getInstance(), () -> {
+            if (!TokenManagerHook.takeTokens(player, value)) {
+                player.sendMessage(ChatColor.RED + "Error: the transaction couldn't be executed. Please inform the staff.");
+            }
+            process.next();
+        }));
     }
 }

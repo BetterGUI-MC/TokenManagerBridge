@@ -1,13 +1,13 @@
 package me.hsgamer.bettergui.tokenmanagerbridge;
 
-import me.hsgamer.bettergui.api.addon.BetterGUIAddon;
 import me.hsgamer.bettergui.builder.ActionBuilder;
 import me.hsgamer.bettergui.builder.RequirementBuilder;
-import me.hsgamer.bettergui.lib.core.variable.VariableManager;
+import me.hsgamer.hscore.bukkit.addon.PluginAddon;
+import me.hsgamer.hscore.variable.VariableManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-public final class Main extends BetterGUIAddon {
+public final class Main extends PluginAddon {
 
     @Override
     public void onEnable() {
