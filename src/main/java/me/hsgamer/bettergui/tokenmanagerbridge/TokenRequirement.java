@@ -4,6 +4,7 @@ import me.hsgamer.bettergui.BetterGUI;
 import me.hsgamer.bettergui.api.requirement.TakableRequirement;
 import me.hsgamer.bettergui.builder.RequirementBuilder;
 import me.hsgamer.bettergui.util.StringReplacerApplier;
+import me.hsgamer.hscore.bukkit.scheduler.Scheduler;
 import me.hsgamer.hscore.bukkit.utils.MessageUtils;
 import me.hsgamer.hscore.common.Validate;
 import org.bukkit.Bukkit;
@@ -58,11 +59,11 @@ public class TokenRequirement extends TakableRequirement<Long> {
         if (value > 0 && !TokenManagerHook.hasTokens(player, value)) {
             return Result.fail();
         }
-        return successConditional((uuid1, process) -> Bukkit.getScheduler().runTask(BetterGUI.getInstance(), () -> {
+        return successConditional((uuid1, process) -> Scheduler.CURRENT.runTask(BetterGUI.getInstance(), () -> {
             if (!TokenManagerHook.takeTokens(player, value)) {
                 player.sendMessage(ChatColor.RED + "Error: the transaction couldn't be executed. Please inform the staff.");
             }
             process.next();
-        }));
+        }, false));
     }
 }

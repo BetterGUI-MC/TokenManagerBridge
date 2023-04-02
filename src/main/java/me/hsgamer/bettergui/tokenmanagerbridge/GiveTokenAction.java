@@ -3,6 +3,7 @@ package me.hsgamer.bettergui.tokenmanagerbridge;
 import me.hsgamer.bettergui.BetterGUI;
 import me.hsgamer.bettergui.api.action.BaseAction;
 import me.hsgamer.bettergui.builder.ActionBuilder;
+import me.hsgamer.hscore.bukkit.scheduler.Scheduler;
 import me.hsgamer.hscore.common.Validate;
 import me.hsgamer.hscore.task.element.TaskProcess;
 import org.bukkit.Bukkit;
@@ -37,12 +38,12 @@ public class GiveTokenAction extends BaseAction {
         long tokensToGive = optionalTokens.get();
 
         if (tokensToGive > 0) {
-            Bukkit.getScheduler().runTask(BetterGUI.getInstance(), () -> {
+            Scheduler.CURRENT.runTask(BetterGUI.getInstance(), () -> {
                 if (!TokenManagerHook.giveTokens(player, tokensToGive)) {
                     player.sendMessage(ChatColor.RED + "Error: the transaction couldn't be executed. Please inform the staff.");
                 }
                 process.next();
-            });
+            }, false);
         } else {
             process.next();
         }
